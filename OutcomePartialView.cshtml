@@ -1,0 +1,44 @@
+﻿@model List<CandidateApplication.Models.Views.OutcomeView>
+
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("Outcome", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                    <div>
+                        <select class="form-control input-sm input-line" id="outcome">
+                            @if (Model != null)
+                            {
+                                foreach (var op in Model) {
+                                <option value="@op.ID">@op.Name</option>
+                                }
+                            }
+                        </select>                        
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("SubOutcome", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div>
+                    <select class="form-control input-sm input-line" id="subOutcome">
+                        @if (Model != null)
+                        {
+                            foreach (var op in Model)
+                            {
+                                foreach (var op1 in op.Suboutcomelist)
+                                {
+                                <option value="@op1.ID">@op1.SubOutcomeName</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

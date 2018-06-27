@@ -1,0 +1,171 @@
+﻿@model CandidateApplication.Models.Views.CandidateView
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Candidate</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.CallbackDetail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CallbackDetail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CallbackDetail, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CreateOn, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.CreateOn, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CreateOn, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.UpdateOn, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.UpdateOn, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.UpdateOn, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Pin, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Pin, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Pin, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Active, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.Active)
+                @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StateCode, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+
+                @Html.DropDownListFor(model => model.StateCode, ViewBag.StatesList as SelectList, "--Select State--", new { @class = "form-control input-sm", @id = "State_Code" })
+
+                @Html.ValidationMessageFor(model => model.StateCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CityCode, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model => model.CityCode, new SelectList( new List<string> ()), "--Select City--", new { @class = "form-control input-sm", @id = "City_Code" })
+
+            @Html.ValidationMessageFor(model => model.CityCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @Html.Partial("OutcomePartialView", model: Model.OutList);
+    @Html.Partial("CallbackPartialView",Model);
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+  @section scripts
+    { 
+      <script>
+
+
+          $(function () {
+              $('#setCallBackDetail').hide();
+              $('select[id=State_Code]').change(function () {
+                  var countryName = $('#State_Code option:selected').val();
+                  if (countryName != "") {
+                      $.ajax({
+                          url: '/Candidates/City',
+                          type: 'GET',
+                          data: { stateId: countryName },
+                          datatype: 'JSON',
+                          success: function (result) {
+                              if (result != "") {
+                                  $('#City_Code').empty();
+                                  $('#City_Code').append($("<option></option>").val("").html("-- Select City --"));
+                                  $.each(result, function (i, p) {
+                                      $('#City_Code').append($("<option></option>").val(p.ID).html(p.CityName));
+                                  });
+                              }
+                              else {
+                                  $('#City_Code').empty();
+                                  $('#City_Code').append($("<option></option>").val("").html("-- Select City --"));
+                                  alert(result.message);
+                              }
+                          },
+                          error: function (response) {
+                              $('#City_Code').empty();
+                              $('#City_Code').append($("<option></option>").val("").html("-- Select City --"));
+                              alert(response);
+                          }
+                      });
+                  }
+                  else {
+                      alert("Please Select State!");
+                  }
+              });
+              $('select[id=subOutcome]').change(function () {
+                  var subOutcome = $('#subOutcome option:selected').val();
+                  if (subOutcome == 44) {
+                      $('#setCallBackDetail').show();
+                  }
+                  else {
+                      $('#setCallBackDetail').hide();
+                  } 
+              });
+
+          });
+
+      </script>
+   }
+
